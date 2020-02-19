@@ -98,6 +98,7 @@ switch criteriaDate < datetime(d) % added by AH
         p.addParamValue('chooseRuleN',1,@isnumeric);
         p.addParamValue('verbose',false,@islogical);
         p.addParamValue('noentropy',false,@islogical);
+        p.addParamValue('marginalize',[],@(x) (isempty(x) | isnumeric(x)));
         p.parse(varargin{:});
     case 0 % current matlab is 2013b or newer
         p = inputParser;
@@ -114,6 +115,7 @@ switch criteriaDate < datetime(d) % added by AH
         p.addParameter('chooseRuleN',1,@isnumeric);
         p.addParameter('verbose',false,@islogical);
         p.addParameter('noentropy',false,@islogical);
+        p.addParameter('marginalize',[],@(x) (isempty(x) | isnumeric(x)));
         p.parse(varargin{:});
 end
 %% Return structure
