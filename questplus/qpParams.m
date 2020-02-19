@@ -74,24 +74,47 @@ function questData = qpParams(varargin)
 
 % 6/30/17  dhb  Started on this.
 % 7/22/17  dhb  Params filtering key/value pairs
+% 2/19/20  AH  modified to work on matlab versions prior to 2013b.
+
+% identify which version of matlab
+criteriaDate = datetime('September 6, 2013'); % date of matlab2013b release, which is when they replaced addParamValue with addParameter
+[~ d] = version; % get release date of current matlab version
 
 %% Parse inputs and set defaults
-p = inputParser;
-p.addParameter('qpPF',@qpPFWeibull,@(x) isa(x,'function_handle'));
-p.addParameter('qpOutcomeF',@(x) qpSimulatedObserver(x,@qpPFWeibull,[-20, 3.5, .5, .02]),@(x) isa(x,'function_handle'));
-p.addParameter('nOutcomes',2,@isscalar);
-p.addParameter('stimParamsDomainList',{[-40:1:0]},@iscell);
-p.addParameter('filterStimParamsDomainFun',[],@(x) (isempty(x) | isa(x,'function_handle')));
-p.addParameter('psiParamsDomainList',{[-40:1:0], [3.5], [.5], [0.02]},@iscell);
-p.addParameter('filterPsiParamsDomainFun',[],@(x) (isempty(x) | isa(x,'function_handle')));
-p.addParameter('priorType','constant',@ischar);
-p.addParameter('stopRule','nTrials',@ischar);
-p.addParameter('chooseRule','best',@ischar);
-p.addParameter('chooseRuleN',1,@isnumeric);
-p.addParameter('verbose',false,@islogical);
-p.addParameter('noentropy',false,@islogical);
-p.addParameter('marginalize',[],@(x) (isempty(x) | isnumeric(x)));
-p.parse(varargin{:});
 
+switch criteriaDate < datetime(d) % added by AH
+    case 1 % current matlab is older than 2013b
+        p = inputParser;
+        p.addParamValue('qpPF',@qpPFWeibull,@(x) isa(x,'function_handle'));
+        p.addParamValue('qpOutcomeF',@(x) qpSimulatedObserver(x,@qpPFWeibull,[-20, 3.5, .5, .02]),@(x) isa(x,'function_handle'));
+        p.addParamValue('nOutcomes',2,@isscalar);
+        p.addParamValue('stimParamsDomainList',{[-40:1:0]},@iscell);
+        p.addParamValue('filterStimParamsDomainFun',[],@(x) (isempty(x) | isa(x,'function_handle')));
+        p.addParamValue('psiParamsDomainList',{[-40:1:0], [3.5], [.5], [0.02]},@iscell);
+        p.addParamValue('filterPsiParamsDomainFun',[],@(x) (isempty(x) | isa(x,'function_handle')));
+        p.addParamValue('priorType','constant',@ischar);
+        p.addParamValue('stopRule','nTrials',@ischar);
+        p.addParamValue('chooseRule','best',@ischar);
+        p.addParamValue('chooseRuleN',1,@isnumeric);
+        p.addParamValue('verbose',false,@islogical);
+        p.addParamValue('noentropy',false,@islogical);
+        p.parse(varargin{:});
+    case 0 % current matlab is 2013b or newer
+        p = inputParser;
+        p.addParameter('qpPF',@qpPFWeibull,@(x) isa(x,'function_handle'));
+        p.addParameter('qpOutcomeF',@(x) qpSimulatedObserver(x,@qpPFWeibull,[-20, 3.5, .5, .02]),@(x) isa(x,'function_handle'));
+        p.addParameter('nOutcomes',2,@isscalar);
+        p.addParameter('stimParamsDomainList',{[-40:1:0]},@iscell);
+        p.addParameter('filterStimParamsDomainFun',[],@(x) (isempty(x) | isa(x,'function_handle')));
+        p.addParameter('psiParamsDomainList',{[-40:1:0], [3.5], [.5], [0.02]},@iscell);
+        p.addParameter('filterPsiParamsDomainFun',[],@(x) (isempty(x) | isa(x,'function_handle')));
+        p.addParameter('priorType','constant',@ischar);
+        p.addParameter('stopRule','nTrials',@ischar);
+        p.addParameter('chooseRule','best',@ischar);
+        p.addParameter('chooseRuleN',1,@isnumeric);
+        p.addParameter('verbose',false,@islogical);
+        p.addParameter('noentropy',false,@islogical);
+        p.parse(varargin{:});
+end
 %% Return structure
 questData = p.Results;
